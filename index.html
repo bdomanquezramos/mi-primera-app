@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnóstico de Gestión — Pymes Constructoras</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f4f0;
+      color: #1a1a18;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 0.5px solid #e0ddd6;
+      padding: 2rem;
+      max-width: 680px;
+      width: 100%;
+    }
+
+    .header {
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: 500;
+      color: #1a1a18;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: #6b6a65;
+    }
+
+    .prog-bar {
+      height: 4px;
+      background: #e0ddd6;
+      border-radius: 2px;
+      margin-bottom: 1.75rem;
+    }
+
+    .prog-fill {
+      height: 4px;
+      background: #185FA5;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .area-tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: #9b9a95;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .q-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: #1a1a18;
+      margin-bottom: 0.3rem;
+      line-height: 1.45;
+    }
+
+    .q-num {
+      font-size: 12px;
+      color: #9b9a95;
+      margin-bottom: 1.25rem;
+    }
+
+    .opts {
+      display: grid;
+      gap: 8px;
+    }
+
+    .ob {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 12px 14px;
+      background: #ffffff;
+      border: 0.5px solid #e0ddd6;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+      width: 100%;
+    }
+
+    .ob:hover { border-color: #b0afa9; background: #f5f4f0; }
+
+    .ob.sel {
+      border-color: #185FA5;
+      background: #e6f1fb;
+    }
+
+    .oc {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      border-radius: 50%;
+      border: 0.5px solid #b0afa9;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .ob.sel .oc {
+      background: #185FA5;
+      border-color: #185FA5;
+    }
+
+    .od {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: white;
+      display: none;
+    }
+
+    .ob.sel .od { display: block; }
+
+    .ot {
+      font-size: 13px;
+      color: #1a1a18;
+      line-height: 1.45;
+    }
+
+    .ob.sel .ot { color: #185FA5; }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+    }
+
+    .bn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: 0.5px solid #b0afa9;
+      background: transparent;
+      color: #1a1a18;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .bn:hover { background: #f5f4f0; }
+
+    .bn.pr {
+      background: #185FA5;
+      color: white;
+      border-color: #185FA5;
+    }
+
+    .bn.pr:hover { opacity: 0.9; }
+    .bn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .nc { font-size: 12px; color: #9b9a95; }
+
+    /* Resultado */
+    .rc {
+      background: #ffffff;
+      border: 0.5px solid #e0ddd6;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .area-bar-wrap { margin-bottom: 0.6rem; }
+
+    .area-bar-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+
+    .area-bar-name { font-size: 13px; color: #1a1a18; font-weight: 500; }
+    .area-bar-pct { font-size: 12px; color: #6b6a65; }
+
+    .area-bar { height: 6px; background: #e0ddd6; border-radius: 3px; }
+
+    .area-bar-fill {
+      height: 6px;
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .bs { background: #eaf3de; color: #3B6D11; }
+    .bw { background: #faeeda; color: #854F0B; }
+    .bd { background: #fcebeb; color: #A32D2D; }
+
+    .cta-block {
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .cta-s { background: #eaf3de; border: 0.5px solid #97C459; }
+    .cta-w { background: #faeeda; border: 0.5px solid #EF9F27; }
+    .cta-d { background: #fcebeb; border: 0.5px solid #F09595; }
+
+    .cta-h { font-size: 15px; font-weight: 500; margin-bottom: 6px; color: #1a1a18; }
+    .cta-b { font-size: 13px; color: #6b6a65; line-height: 1.5; margin-bottom: 1rem; }
+
+    .bwa {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #25D366;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: inherit;
+    }
+
+    .bwa:hover { opacity: 0.88; }
+
+    .weak-list { list-style: none; padding: 0; margin: 0.75rem 0 0; }
+
+    .weak-list li {
+      font-size: 13px;
+      color: #6b6a65;
+      padding: 4px 0;
+      border-bottom: 0.5px solid #e0ddd6;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .weak-list li:last-child { border: none; }
+
+    @media (max-width: 480px) {
+      body { padding: 1rem 0.5rem; }
+      .container { padding: 1.25rem; border-radius: 12px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Diagnóstico de Gestión</h1>
+    <p>Pymes constructoras — 30 preguntas en 6 áreas clave</p>
+  </div>
+
+  <div class="prog-bar"><div class="prog-fill" id="pf" style="width:3%"></div></div>
+  <div id="qview"></div>
+  <div id="res" style="display:none"></div>
+</div>
+
+<script>
+const AREAS = [
+  'Liderazgo y estructura organizacional',
+  'Planificación y productividad en terreno',
+  'Finanzas y flujo de caja',
+  'Abastecimiento y subcontratos',
+  'Calidad y prevención de riesgos',
+  'Tecnología y digitalización'
+];
+
+const QS = [
+  {a:0,q:'En el día a día, ¿cuántas decisiones de compra o autorizaciones dependen exclusivamente de ti o del dueño?',opts:[
+    {t:'Tenemos límites claros; el equipo toma decisiones operativas de forma autónoma',v:3},
+    {t:'Delego las menores, pero compras y autorizaciones importantes siempre pasan por mí',v:2},
+    {t:'Casi todo pasa por mí; sin mi disponibilidad es difícil avanzar',v:1},
+    {t:'Todo depende exclusivamente de mí; sin mi firma nada se mueve',v:0}
+  ]},
+  {a:0,q:'¿Tienen claramente definidas las responsabilidades del Administrador de Obra, el Jefe de Terreno y los capataces?',opts:[
+    {t:'Sí, tenemos organigrama y perfiles de cargo; cada uno sabe exactamente qué le corresponde',v:3},
+    {t:'Hay cierta claridad, pero a veces hay superposición o conflictos de responsabilidad',v:2},
+    {t:'Es informal; los roles se asignan según quién esté disponible',v:1},
+    {t:'No, los roles se mezclan constantemente y generan confusión en terreno',v:0}
+  ]},
+  {a:0,q:'Si te ausentas dos semanas, ¿la obra sigue su curso o se generan cuellos de botella?',opts:[
+    {t:'La obra sigue sin problemas; el equipo está capacitado para tomar decisiones',v:3},
+    {t:'Sigue, pero con dificultades y consultas frecuentes',v:2},
+    {t:'Se generan retrasos importantes y el equipo pierde el norte',v:1},
+    {t:'La obra prácticamente se detiene si no estoy presente',v:0}
+  ]},
+  {a:0,q:'¿Pasa seguido que dos personas hacen el mismo trabajo o que tareas importantes quedan sin hacer porque "pensaron que el otro lo haría"?',opts:[
+    {t:'No, tenemos procesos claros que evitan duplicidades y vacíos de responsabilidad',v:3},
+    {t:'Ocurre ocasionalmente pero lo detectamos y corregimos rápido',v:2},
+    {t:'Es frecuente y nos genera pérdida de tiempo y retrabajos',v:1},
+    {t:'Es la norma; siempre hay confusión sobre quién hace qué',v:0}
+  ]},
+  {a:0,q:'¿Cómo controlas la rotación del personal clave y qué haces para retener a los buenos maestros y profesionales?',opts:[
+    {t:'Tenemos política de retención, evaluaciones de desempeño y planes de desarrollo',v:3},
+    {t:'Hacemos algunos esfuerzos puntuales pero no es un proceso formal',v:2},
+    {t:'La rotación es alta y no tenemos estrategia clara para retener al personal clave',v:1},
+    {t:'No controlamos la rotación; perdemos buenos maestros constantemente',v:0}
+  ]},
+  {a:1,q:'¿Utilizan metodologías ágiles como Last Planner System o solo se guían por una Carta Gantt estática?',opts:[
+    {t:'Usamos Last Planner System u otra metodología ágil con reuniones semanales de planificación',v:3},
+    {t:'Tenemos Carta Gantt y la actualizamos regularmente según el avance real',v:2},
+    {t:'Tenemos Carta Gantt pero rara vez la seguimos o actualizamos',v:1},
+    {t:'No tenemos programación formal; avanzamos según lo que se presenta cada día',v:0}
+  ]},
+  {a:1,q:'¿Cómo mides semanalmente el avance físico real de la obra versus lo planificado?',opts:[
+    {t:'Medimos avance físico con indicadores (% real vs. planificado) y lo reportamos formalmente',v:3},
+    {t:'Hacemos seguimiento semanal pero de forma informal y sin indicadores claros',v:2},
+    {t:'El control es mensual o cuando el mandante lo solicita',v:1},
+    {t:'No medimos el avance sistemáticamente; lo estimamos visualmente',v:0}
+  ]},
+  {a:1,q:'Cuando la ITO o el mandante solicitan obras extraordinarias, ¿tienen proceso claro para cobrar antes de ejecutar?',opts:[
+    {t:'Sí, cotización y aprobación escrita firmada antes de ejecutar cualquier obra extraordinaria',v:3},
+    {t:'Generalmente lo hacemos, aunque a veces ejecutamos antes de confirmar el cobro',v:2},
+    {t:'Frecuentemente ejecutamos primero y después intentamos cobrar, con resultados variables',v:1},
+    {t:'No tenemos proceso; muchas obras extraordinarias quedan sin cobrar',v:0}
+  ]},
+  {a:1,q:'Al iniciar la instalación de faena, ¿diseñan el flujo de movimiento de maquinaria y cuadrillas?',opts:[
+    {t:'Sí, diseñamos el layout de faena y el flujo de trabajo antes de iniciar la obra gruesa',v:3},
+    {t:'Lo planificamos parcialmente, pero improvisamos bastante en terreno',v:2},
+    {t:'Rara vez lo planificamos; los conflictos de espacio se resuelven sobre la marcha',v:1},
+    {t:'No lo hacemos; la logística en terreno es reactiva y genera conflictos frecuentes',v:0}
+  ]},
+  {a:1,q:'¿Tienen medido el porcentaje de horas improductivas de las cuadrillas por falta de materiales o mala coordinación?',opts:[
+    {t:'Sí, medimos el % de horas improductivas y tomamos acciones correctivas con datos',v:3},
+    {t:'Tenemos una estimación aproximada pero sin medición formal',v:2},
+    {t:'Sabemos que hay tiempos muertos pero no los cuantificamos',v:1},
+    {t:'No lo medimos; desconocemos el impacto real en nuestra productividad',v:0}
+  ]},
+  {a:2,q:'¿Llevan control exacto de los días que demora el mandante en aprobar y pagar los estados de pago?',opts:[
+    {t:'Sí, registramos la antigüedad de cada estado de pago y gestionamos activamente el cobro',v:3},
+    {t:'Hacemos seguimiento pero de forma manual o poco sistemática',v:2},
+    {t:'Solo revisamos cuando hay problemas de liquidez',v:1},
+    {t:'No llevamos control; a veces no sabemos qué estados de pago están pendientes',v:0}
+  ]},
+  {a:2,q:'¿Diferencian la utilidad "en el papel" de la liquidez real disponible para pagar nóminas y leyes sociales?',opts:[
+    {t:'Sí, tenemos flujo de caja proyectado y diferenciamos claramente utilidad devengada de liquidez',v:3},
+    {t:'Lo diferenciamos conceptualmente pero no lo gestionamos con herramientas formales',v:2},
+    {t:'A veces confundimos facturación con disponibilidad; la falta de caja nos sorprende',v:1},
+    {t:'No diferenciamos; hemos recurrido a créditos para pagar nóminas inesperadamente',v:0}
+  ]},
+  {a:2,q:'¿Miden el rendimiento de costos (CPI) en tiempo real para saber si una partida específica está perdiendo plata?',opts:[
+    {t:'Sí, monitoreamos el CPI en tiempo real y tomamos acciones correctivas por partida',v:3},
+    {t:'Hacemos control de costos pero solo al cierre mensual o de partida',v:2},
+    {t:'Solo medimos costos al finalizar la obra; para entonces ya es tarde para corregir',v:1},
+    {t:'No medimos rendimiento de costos; las pérdidas las descubrimos cuando la obra termina',v:0}
+  ]},
+  {a:2,q:'¿Conocen con exactitud su tasa mensual de gastos generales (costo de mantener la empresa aunque la obra se paralice)?',opts:[
+    {t:'Sí, conocemos exactamente nuestra tasa mensual y la incluimos correctamente en los presupuestos',v:3},
+    {t:'Tenemos una estimación aproximada que ajustamos periódicamente',v:2},
+    {t:'No la calculamos formalmente; la estimamos al presupuestar cada obra',v:1},
+    {t:'No la conocemos; a veces nuestros presupuestos no cubren los gastos generales reales',v:0}
+  ]},
+  {a:2,q:'¿Tienen plan financiero para soportar retenciones de estados de pago y el costo de boletas de garantía?',opts:[
+    {t:'Sí, tenemos línea de crédito o flujo reservado para cubrir retenciones y garantías',v:3},
+    {t:'Lo gestionamos caso a caso pero sin plan financiero formal',v:2},
+    {t:'Las retenciones nos afectan el flujo pero no tenemos estrategia para mitigarlo',v:1},
+    {t:'Las retenciones y garantías nos han generado crisis de liquidez en más de una ocasión',v:0}
+  ]},
+  {a:3,q:'Al comprar materiales, ¿solo buscan la cotización más barata o evalúan también plazo de entrega y calidad?',opts:[
+    {t:'Evaluamos precio, plazo de entrega, calidad y servicio con criterios definidos por escrito',v:3},
+    {t:'Consideramos precio y plazo, pero el precio sigue siendo el factor dominante',v:2},
+    {t:'Generalmente elegimos al proveedor más barato sin evaluar otros factores',v:1},
+    {t:'Solo miramos precio; hemos tenido problemas por mala calidad o entregas tardías',v:0}
+  ]},
+  {a:3,q:'¿Qué tan frecuente es que la obra se paralice porque el material no llegó a tiempo a la bodega?',opts:[
+    {t:'Muy poco frecuente; tenemos control de inventario y compras anticipadas planificadas',v:3},
+    {t:'Ocurre ocasionalmente pero lo resolvemos rápido',v:2},
+    {t:'Es frecuente y nos genera retrasos y costos adicionales',v:1},
+    {t:'Es un problema recurrente que paraliza la obra con regularidad',v:0}
+  ]},
+  {a:3,q:'Para partidas críticas como hormigón o acero, ¿tienen proveedores backup si el principal les falla?',opts:[
+    {t:'Sí, tenemos al menos un proveedor alternativo homologado para cada material crítico',v:3},
+    {t:'Para algunos materiales críticos sí, pero no para todos',v:2},
+    {t:'No formalmente; buscamos alternativas cuando el problema ya ocurrió',v:1},
+    {t:'No, dependemos de un solo proveedor para la mayoría de los materiales críticos',v:0}
+  ]},
+  {a:3,q:'¿Llevan control estricto de que sus subcontratistas paguen imposiciones (F30 y F30-1) para evitar responsabilidad solidaria?',opts:[
+    {t:'Sí, exigimos F30 y F30-1 mensualmente y no cursamos estados de pago sin ellos',v:3},
+    {t:'Lo hacemos en general, pero a veces se nos escapa algún subcontratista',v:2},
+    {t:'Lo pedimos pero no siempre verificamos que estén al día',v:1},
+    {t:'No controlamos las imposiciones de subcontratistas; desconocemos nuestra exposición legal',v:0}
+  ]},
+  {a:3,q:'¿Realizan inventarios periódicos en bodega de obra para evitar mermas, robos o pérdidas de herramientas?',opts:[
+    {t:'Sí, inventarios periódicos con kardex actualizado y control de entradas/salidas',v:3},
+    {t:'Hacemos inventarios ocasionalmente pero sin sistema formal',v:2},
+    {t:'Solo hacemos inventario al inicio y fin de obra',v:1},
+    {t:'No llevamos control de bodega; las mermas y pérdidas son un costo asumido',v:0}
+  ]},
+  {a:4,q:'¿Tienen prevencionista activo que realice las charlas ODI y mantenga la tasa de accidentabilidad al mínimo?',opts:[
+    {t:'Sí, prevencionista dedicado, charlas ODI diarias y tasa de accidentabilidad bajo control',v:3},
+    {t:'Tenemos prevencionista a tiempo parcial o compartido y cumplimos lo básico',v:2},
+    {t:'Cumplimos los mínimos legales pero la seguridad no es prioridad real en terreno',v:1},
+    {t:'La seguridad es reactiva; actuamos solo ante accidentes o visitas de inspección',v:0}
+  ]},
+  {a:4,q:'¿Mantienen actualizados registros de inducciones firmadas, entregas de EPP y el Libro de Subcontratación?',opts:[
+    {t:'Sí, todo al día: inducciones firmadas, registros de EPP y Libro de Subcontratación actualizado',v:3},
+    {t:'Generalmente al día, pero con algunos documentos pendientes o atrasados',v:2},
+    {t:'Tenemos los documentos pero a menudo desactualizados o incompletos',v:1},
+    {t:'La documentación laboral es un punto débil; nos ha generado problemas con la ITO',v:0}
+  ]},
+  {a:4,q:'Durante las terminaciones, ¿utilizan protocolos o checklists para evitar que la ITO rechace las partidas?',opts:[
+    {t:'Sí, usamos protocolos y checklists formales por partida antes de llamar a la ITO',v:3},
+    {t:'Hacemos revisiones pero sin checklists formalizados',v:2},
+    {t:'La revisión depende del criterio del profesional a cargo; no hay estándar',v:1},
+    {t:'No, las observaciones de la ITO son nuestra forma de control de calidad; es reactivo',v:0}
+  ]},
+  {a:4,q:'¿Miden cuánto dinero pierden al mes por tener que demoler y volver a hacer un trabajo mal ejecutado?',opts:[
+    {t:'Sí, medimos el rework rate y mantenemos acciones correctivas documentadas',v:3},
+    {t:'Tenemos estimación general pero sin medición formal por partida',v:2},
+    {t:'Sabemos que hay reprocesos pero no cuantificamos el costo real',v:1},
+    {t:'No lo medimos; los reprocesos se absorben como costo inevitable del negocio',v:0}
+  ]},
+  {a:4,q:'¿Tienen equipo o procedimiento formal para atender garantías y postventa una vez entregado el proyecto?',opts:[
+    {t:'Sí, proceso formal de postventa con responsables y tiempos de respuesta definidos',v:3},
+    {t:'Atendemos la postventa pero de forma reactiva y sin proceso formalizado',v:2},
+    {t:'La postventa depende de la buena voluntad del equipo; no hay proceso claro',v:1},
+    {t:'No tenemos postventa formal; es una fuente recurrente de conflictos con clientes',v:0}
+  ]},
+  {a:5,q:'¿Controlan la obra con planillas Excel y WhatsApp o ya utilizan un software de gestión especializado en construcción?',opts:[
+    {t:'Usamos ERP o software especializado en construcción para proyectos, costos y compras',v:3},
+    {t:'Usamos algunas herramientas digitales especializadas aunque no integradas entre sí',v:2},
+    {t:'Usamos Excel avanzado y WhatsApp; funciona pero con limitaciones importantes',v:1},
+    {t:'Solo Excel básico y comunicación informal; perdemos información con frecuencia',v:0}
+  ]},
+  {a:5,q:'¿Cómo controlan las horas reales trabajadas por maestros y subcontratos para el pago de nómina?',opts:[
+    {t:'Sistema digital (app o biométrico) que registra horas reales e integra con nómina',v:3},
+    {t:'Tenemos control manual o semi-digital que revisamos para el pago',v:2},
+    {t:'Usamos planillas en papel que alguien transcribe manualmente',v:1},
+    {t:'El control es informal; basado en la palabra del capataz o del subcontratista',v:0}
+  ]},
+  {a:5,q:'¿Tienen planos, RDI y especificaciones técnicas centralizados en la nube con control de versiones para terreno?',opts:[
+    {t:'Sí, plataforma en la nube con control de versiones y acceso desde terreno en tiempo real',v:3},
+    {t:'Usamos nube (Drive, Dropbox) pero sin control formal de versiones',v:2},
+    {t:'Los documentos están en computadores locales; actualizarlos en terreno es un problema',v:1},
+    {t:'No, trabajamos con planos impresos; es frecuente construir con versiones desactualizadas',v:0}
+  ]},
+  {a:5,q:'¿Los profesionales de obra usan tablets o celulares para levantar no conformidades e incidencias en terreno?',opts:[
+    {t:'Sí, el equipo usa apps para reportes diarios, NCR y registro fotográfico de avance',v:3},
+    {t:'Usamos algunos medios digitales pero con resistencia del equipo o uso inconsistente',v:2},
+    {t:'Los reportes se hacen en papel o WhatsApp y alguien los transcribe después',v:1},
+    {t:'No hay reporte diario formal de terreno',v:0}
+  ]},
+  {a:5,q:'¿Han evaluado o implementado BIM para adelantarse a interferencias entre especialidades antes de construir?',opts:[
+    {t:'Sí, usamos BIM activamente para coordinación de especialidades y gestión de interferencias',v:3},
+    {t:'Hemos evaluado BIM o lo usamos parcialmente en algunos proyectos',v:2},
+    {t:'Conocemos BIM pero no lo hemos implementado; está en los planes',v:1},
+    {t:'No lo consideramos relevante para nuestro tipo de proyectos',v:0}
+  ]}
+];
+
+const MAX_TOTAL = QS.length * 3;
+let cur = 0;
+const ans = new Array(QS.length).fill(null);
+
+/* ── NÚMERO DE WHATSAPP ── */
+const WA_NUMBER = '56962499101';
+/* ───────────────────────── */
+
+function pct(v, max) { return max > 0 ? Math.round((v / max) * 100) : 0; }
+
+const AREA_ICONS = ['building','chart-bar','cash','truck','shield-check','device-laptop'];
+const BAR_COLORS = ['#185FA5','#0F6E56','#BA7517','#3B6D11','#993C1D','#534AB7'];
+
+function render() {
+  if (cur >= QS.length) { showResult(); return; }
+  const q = QS[cur];
+  const prog = Math.round(((cur + 1) / QS.length) * 100);
+  document.getElementById('pf').style.width = prog + '%';
+  document.getElementById('res').style.display = 'none';
+  document.getElementById('qview').style.display = 'block';
+  document.getElementById('qview').innerHTML = `
+    <div class="area-tag">
+      <i class="ti ti-${AREA_ICONS[q.a]}" style="font-size:12px;margin-right:4px"></i>
+      Área ${q.a + 1}: ${AREAS[q.a]}
+    </div>
+    <div class="q-title">${q.q}</div>
+    <div class="q-num">Pregunta ${cur + 1} de ${QS.length}</div>
+    <div class="opts">
+      ${q.opts.map((o, i) => `
+        <button class="ob${ans[cur] === i ? ' sel' : ''}" onclick="pick(${i})">
+          <div class="oc"><div class="od"></div></div>
+          <div class="ot">${o.t}</div>
+        </button>
+      `).join('')}
+    </div>
+    <div class="nav">
+      ${cur > 0 ? '<button class="bn" onclick="go(-1)">← Anterior</button>' : '<span></span>'}
+      <span class="nc">${cur + 1} / ${QS.length}</span>
+      <button class="bn pr" id="nb" ${ans[cur] === null ? 'disabled' : ''} onclick="go(1)">
+        ${cur === QS.length - 1 ? 'Ver resultado →' : 'Siguiente →'}
+      </button>
+    </div>
+  `;
+}
+
+function pick(i) {
+  ans[cur] = i;
+  document.querySelectorAll('.ob').forEach((b, j) => b.classList.toggle('sel', j === i));
+  const nb = document.getElementById('nb');
+  if (nb) nb.disabled = false;
+}
+
+function go(d) {
+  cur += d;
+  render();
+  window.scrollTo(0, 0);
+}
+
+function areaScore(a) {
+  let s = 0, n = 0;
+  QS.forEach((q, i) => { if (q.a === a && ans[i] !== null) { s += QS[i].opts[ans[i]].v; n++; } });
+  return { score: s, max: n * 3 };
+}
+
+function totalScore() {
+  return QS.reduce((s, q, i) => ans[i] !== null ? s + QS[i].opts[ans[i]].v : s, 0);
+}
+
+function showResult() {
+  document.getElementById('pf').style.width = '100%';
+  document.getElementById('qview').style.display = 'none';
+  const resEl = document.getElementById('res');
+  resEl.style.display = 'block';
+
+  const total = totalScore();
+  const totalPct = pct(total, MAX_TOTAL);
+  const areaScores = AREAS.map((_, a) => areaScore(a));
+  const weakAreas = [...areaScores.map((s, a) => ({ a, p: pct(s.score, s.max) }))]
+    .sort((a, b) => a.p - b.p).slice(0, 3).map(x => AREAS[x.a]);
+
+  let tier, tierBadge, ctaCls, ctaH, ctaB;
+  if (totalPct >= 65) {
+    tier = 'Empresa bien gestionada'; tierBadge = 'bs';
+    ctaCls = 'cta-s';
+    ctaH = 'Oportunidades de optimización avanzada';
+    ctaB = 'Llevas tu empresa con solidez. Sin embargo, en construcción la diferencia entre una empresa buena y una rentable está en los detalles. Conversemos sobre cómo llevar tu gestión al siguiente nivel.';
+  } else if (totalPct >= 40) {
+    tier = 'Brechas críticas identificadas'; tierBadge = 'bw';
+    ctaCls = 'cta-w';
+    ctaH = 'Este es el momento de actuar';
+    ctaB = 'Tu evaluación revela brechas importantes en áreas que impactan directamente tu rentabilidad y flujo de caja. Una sesión 1 a 1 puede ayudarte a priorizar dónde atacar primero para ver resultados rápidos.';
+  } else {
+    tier = 'Situación de alto riesgo operacional'; tierBadge = 'bd';
+    ctaCls = 'cta-d';
+    ctaH = 'Requieres intervención urgente';
+    ctaB = 'Tu empresa enfrenta vulnerabilidades severas en múltiples frentes. El costo de no actuar hoy puede ser mucho más alto que el de una consultoría. Conversemos esta semana.';
+  }
+
+  const waMsg = encodeURIComponent(
+    `Hola, acabo de completar el diagnóstico de gestión para pymes constructoras y obtuve ${totalPct}% (${tier}). Las áreas con más brechas son: ${weakAreas.join(', ')}. Me gustaría conversar contigo.`
+  );
+  const waUrl = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;
+
+  resEl.innerHTML = `
+    <div class="area-tag">Diagnóstico completo</div>
+    <div style="font-size:18px;font-weight:500;color:#1a1a18;margin-bottom:.25rem">Tu resultado de gestión</div>
+    <div style="font-size:13px;color:#6b6a65;margin-bottom:1.5rem">Basado en ${QS.length} preguntas en 6 áreas de la empresa</div>
+
+    <div class="rc">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <div>
+          <div style="font-size:13px;color:#6b6a65;margin-bottom:2px">Puntaje global</div>
+          <div style="display:flex;align-items:baseline;gap:6px">
+            <span style="font-size:38px;font-weight:500;color:#1a1a18;line-height:1">${totalPct}</span>
+            <span style="font-size:18px;color:#9b9a95;font-weight:500">/ 100</span>
+          </div>
+        </div>
+        <span class="badge ${tierBadge}">${tier}</span>
+      </div>
+      ${areaScores.map((s, a) => {
+        const p = pct(s.score, s.max);
+        return `<div class="area-bar-wrap">
+          <div class="area-bar-label">
+            <span class="area-bar-name">
+              <i class="ti ti-${AREA_ICONS[a]}" style="font-size:13px;margin-right:5px;color:#9b9a95"></i>${AREAS[a]}
+            </span>
+            <span class="area-bar-pct">${p}%</span>
+          </div>
+          <div class="area-bar">
+            <div class="area-bar-fill" style="width:${p}%;background:${BAR_COLORS[a]}"></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="rc">
+      <div style="font-size:13px;font-weight:500;color:#1a1a18;margin-bottom:.5rem">Áreas con mayor brecha</div>
+      <ul class="weak-list">
+        ${weakAreas.map(w => `<li><i class="ti ti-alert-triangle" style="color:#BA7517;font-size:14px"></i>${w}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="cta-block ${ctaCls}">
+      <div class="cta-h">${ctaH}</div>
+      <div class="cta-b">${ctaB}</div>
+      <a class="bwa" href="${waUrl}" target="_blank">
+        <i class="ti ti-brand-whatsapp"></i> Agendar sesión por WhatsApp
+      </a>
+    </div>
+
+    <div style="margin-top:1rem;text-align:center">
+      <button class="bn" onclick="restart()" style="font-size:12px;color:#9b9a95">Volver a evaluar</button>
+    </div>
+  `;
+}
+
+function restart() {
+  ans.fill(null); cur = 0;
+  document.getElementById('res').style.display = 'none';
+  document.getElementById('qview').style.display = 'block';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
